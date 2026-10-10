@@ -428,7 +428,7 @@ a {
 }
 
 /* ===========================
-   Карточки преподавателей
+   Карточки команды программы
    =========================== */
 .teachers-grid {
     display: grid;
@@ -447,6 +447,13 @@ a {
     transition: transform var(--transition);
     width: 100%;
     max-width: 260px;
+}
+
+.teacher-card__credentials {
+    margin-top: 8px;
+    font-size: 0.82rem;
+    line-height: 1.4;
+    color: var(--color-text-light);
 }
 
 .teacher-card:hover {
@@ -489,6 +496,7 @@ a {
 .teacher-card__role {
     font-size: 0.9rem;
     color: var(--color-text-light);
+    line-height: 1.45; /* для многострочных ролей */
 }
 
 /* ===========================
