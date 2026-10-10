@@ -590,6 +590,24 @@ a {
     word-break: break-word;
 }
 
+.contacts__value-note {
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: var(--color-text-light);
+    white-space: nowrap;
+}
+
+/* Не-ссылки тоже должны выглядеть как карточки, но без hover-эффекта */
+.contacts__item:not(.contacts__item--link) {
+    cursor: default;
+}
+
+.contacts__item:not(.contacts__item--link):hover {
+    border-color: var(--color-border);
+    transform: none;
+    box-shadow: none;
+}
+
 .contacts__cta {
     text-align: center;
     margin-top: 40px;
