@@ -62,7 +62,7 @@ body {
     color: var(--color-text);
     line-height: 1.65;
     -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
+    overflow-x: clip;   /* было hidden — clip не ломает position: fixed */
 }
 
 img {
@@ -935,27 +935,28 @@ a {
 .sakura-bg {
     position: fixed;
     bottom: 0;
+    /* env() — компенсация "домашней полоски" на iPhone */
+    bottom: env(safe-area-inset-bottom, 0);
     z-index: 1;
     pointer-events: none;
     overflow: hidden;
     opacity: 0;
     transition: opacity 1s ease;
     contain: layout paint;
-    /* Размеры — только в vw/vh (без px-границ).
-       vw/vh масштабируются вместе с вьюпортом, а значит и с браузерным
-       зумом: физический размер иллюстраций не меняется ни при 50 %, ни при 500 %. */
+    /* dvh (dynamic viewport height) учитывает адресную строку мобильных браузеров.
+       На десктопе работает как обычный vh. */
 }
 
 .pagoda-bg {
     left: 0;
     width: 47vw;
-    height: 107vh;
+    height: 107dvh;
 }
 
 .sakura-bg {
     right: 0;
     width: 43vw;
-    height: 107vh;
+    height: 107dvh;
 }
 
 .pagoda-bg--ready { opacity: 0.30; }
@@ -1005,35 +1006,48 @@ a {
     }
 }
 
-/* Пауза, когда вкладка скрыта */
 .pagoda-bg.is-paused .sketch-mark--animated,
 .sakura-bg.is-paused .sketch-mark--animated {
     animation-play-state: paused;
 }
 
-/* Контент выше рисунков; сами иллюстрации не перехватывают клики. */
 .container { position: relative; z-index: 2; }
 .header { z-index: 100; }
 
 /* ===========================
-   Мобильные тач-устройства
-   (именно тач, а не «узкий вьюпорт после зума»)
+   Мобильные тач-устройства — портрет
    =========================== */
-@media (hover: none) and (pointer: coarse) and (max-width: 768px) {
+@media (hover: none) and (pointer: coarse) and (orientation: portrait) {
     .pagoda-bg {
         width: 62vw;
-        height: 73vh;
+        height: 73dvh;
     }
     .sakura-bg {
         width: 53vw;
-        height: 68vh;
+        height: 68dvh;
     }
     .pagoda-bg--ready { opacity: 0.22; }
     .sakura-bg--ready { opacity: 0.18; }
 }
 
-/* Сильный зум на ПК даёт низкий вьюпорт — приглушаем фон,
-   чтобы он не забивал контент. Размер НЕ трогаем. */
+/* ===========================
+   Мобильные тач-устройства — ЛАНДШАФТ
+   Здесь высота маленькая → привязываемся к vh, а не vw
+   =========================== */
+@media (hover: none) and (pointer: coarse) and (orientation: landscape) {
+    .pagoda-bg {
+        width: 42vh;
+        height: 92dvh;
+    }
+    .sakura-bg {
+        width: 36vh;
+        height: 86dvh;
+    }
+    .pagoda-bg--ready { opacity: 0.20; }
+    .sakura-bg--ready { opacity: 0.16; }
+}
+
+/* Очень низкий вьюпорт на ПК при сильном зуме — приглушаем */
 @media (max-height: 500px) {
     .pagoda-bg--ready { opacity: 0.22; }
     .sakura-bg--ready { opacity: 0.18; }
