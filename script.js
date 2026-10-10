@@ -133,9 +133,9 @@ document.addEventListener('DOMContentLoaded', () => {
             centeredSlides: true,
             slidesPerView: 1,
             spaceBetween: 0,
-            loop: false,          // ← вот это главное
-            rewind: true,         // когда дошли до конца — следующий свайп возвращает в начало
-            speed: 750,           // плавнее, чем было (по умолчанию 300)
+            loop: false,
+            rewind: true,
+            speed: 750,
 
             cardsEffect: {
                 perSlideOffset: 18,
@@ -144,21 +144,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 slideShadows: false,
             },
 
+            // Адаптив под ширину вьюпорта (в том числе — при браузерном зуме)
+            breakpoints: {
+                0: {
+                    cardsEffect: { perSlideOffset: 6,  perSlideRotate: 2.0 },
+                },
+                480: {
+                    cardsEffect: { perSlideOffset: 10, perSlideRotate: 2.5 },
+                },
+                768: {
+                    cardsEffect: { perSlideOffset: 14, perSlideRotate: 3.0 },
+                },
+                1024: {
+                    cardsEffect: { perSlideOffset: 18, perSlideRotate: 4.0 },
+                },
+            },
+
             navigation: {
                 nextEl: '.gallery__swiper .swiper-button-next',
                 prevEl: '.gallery__swiper .swiper-button-prev',
             },
-
             pagination: {
                 el: '.gallery__swiper .swiper-pagination',
                 clickable: true,
             },
-
-            keyboard: {
-                enabled: true,
-                onlyInViewport: true,
-            },
-
+            keyboard: { enabled: true, onlyInViewport: true },
             a11y: {
                 prevSlideMessage: 'Предыдущий слайд',
                 nextSlideMessage: 'Следующий слайд',

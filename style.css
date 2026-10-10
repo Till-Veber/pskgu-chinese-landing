@@ -120,8 +120,8 @@ a {
    =========================== */
 .header {
     background: var(--color-white);
-    border-bottom: 3px solid var(--color-primary);
-    padding: 16px 0;
+    border-bottom: clamp(1px, 0.3vh, 3px) solid var(--color-primary);
+    padding: clamp(3px, 1vh, 12px) 0;
     position: sticky;
     top: 0;
     z-index: 100;
@@ -132,21 +132,20 @@ a {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 24px;
+    gap: clamp(8px, 1.5vw, 20px);
 }
 
-/* Базовый бренд-блок */
 .header__brand {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: clamp(4px, 0.8vw, 12px);
     text-decoration: none;
-    min-width: 0; /* чтобы длинные надписи корректно сжимались */
+    min-width: 0;
 }
 
 .header__brand-logo {
-    width: 56px;
-    height: 56px;
+    width: clamp(18px, 3vw, 48px);
+    height: clamp(18px, 3vw, 48px);
     flex-shrink: 0;
     object-fit: contain;
     transition: transform var(--transition);
@@ -156,20 +155,16 @@ a {
     transform: scale(1.06);
 }
 
-/* Текст — общий контейнер */
 .header__brand-text {
     line-height: 1.25;
     min-width: 0;
 }
 
-/* Все три варианта текста скрыты по умолчанию */
 .brand-text {
     display: none;
 }
 
-/* ---------------------------
-   ВУЗ: рукописный шрифт, красный, плавное подчёркивание
-   --------------------------- */
+/* ---- ВУЗ ---- */
 .header__brand--university .header__brand-text {
     color: var(--color-primary);
     background-image: linear-gradient(currentColor, currentColor);
@@ -187,36 +182,43 @@ a {
     color: inherit;
 }
 
-.header__brand--university .brand-text--full  { font-size: 1.35rem; }
-.header__brand--university .brand-text--mid   { font-size: 1.4rem; }
-.header__brand--university .brand-text--short { font-size: 1.6rem; }
+.header__brand--university .brand-text--full {
+    font-size: clamp(0.7rem, 1.1vw, 1.25rem);
+}
+.header__brand--university .brand-text--mid {
+    font-size: clamp(0.72rem, 1.2vw, 1.3rem);
+}
+.header__brand--university .brand-text--short {
+    font-size: clamp(0.78rem, 1.4vw, 1.5rem);
+}
 
 .header__brand--university:hover .header__brand-text {
     background-size: 100% 1px;
 }
 
-/* ---------------------------
-   ИНСТИТУТ: рукописный шрифт, чёрный → красный при hover
-   --------------------------- */
+/* ---- ИНСТИТУТ ---- */
 .header__brand--ino .header__brand-text {
-    color: var(--color-text); /* чёрный (тёмный) */
+    color: var(--color-text);
     transition: color var(--transition);
 }
 
 .header__brand--ino .brand-text {
-    font-family: var(--font-heading); /* рукописный FoglihtenNo06 */
+    font-family: var(--font-heading);
     font-weight: 400;
     letter-spacing: 0.01em;
     color: inherit;
     line-height: 1.25;
 }
 
-/* Размеры — такие же, как у вуза */
-.header__brand--ino .brand-text--full  { font-size: 1.35rem; }
-.header__brand--ino .brand-text--short { font-size: 1.6rem; }
+.header__brand--ino .brand-text--full {
+    font-size: clamp(0.7rem, 1.1vw, 1.25rem);
+}
+.header__brand--ino .brand-text--short {
+    font-size: clamp(0.78rem, 1.4vw, 1.5rem);
+}
 
 .header__brand--ino:hover .header__brand-text {
-    color: var(--color-primary); /* при hover → красный */
+    color: var(--color-primary);
 }
 
 /* ===========================
@@ -828,27 +830,20 @@ a {
 }
 
 /* ===========================
-   Хедер: адаптивные надписи
+   Хедер: переключение вариантов текста
+   (размеры — через clamp, тут только показ нужного варианта)
    =========================== */
 
-/* ---------------------------
-   ВУЗ: полное → среднее → короткое
-   --------------------------- */
 @media (min-width: 1000px) {
     .header__brand--university .brand-text--full { display: inline; }
 }
 @media (min-width: 700px) and (max-width: 999px) {
     .header__brand--university .brand-text--mid { display: inline; }
-    .header__brand-logo { width: 48px; height: 48px; }
 }
 @media (max-width: 699px) {
     .header__brand--university .brand-text--short { display: inline; }
-    .header__brand-logo { width: 44px; height: 44px; }
 }
 
-/* ---------------------------
-   ИНСТИТУТ: полное → короткое (без промежуточного)
-   --------------------------- */
 @media (min-width: 800px) {
     .header__brand--ino .brand-text--full { display: inline; }
 }
@@ -856,86 +851,111 @@ a {
     .header__brand--ino .brand-text--short { display: inline; }
 }
 
-/* ---------------------------
-   Мобильный хедер: одна строка, компактно
-   --------------------------- */
+/* Мобильный хедер: одна строка, ничего не переносится */
 @media (max-width: 480px) {
-    .header {
-        padding: 10px 0;
-    }
-
     .header__inner {
         gap: 8px;
-        flex-wrap: nowrap; /* запрещаем перенос — только одна строка */
+        flex-wrap: nowrap;
     }
-
     .header__brand {
-        gap: 6px;
-        flex-shrink: 1; /* разрешаем сжиматься, если не влезает */
+        flex-shrink: 1;
         min-width: 0;
     }
-
-    .header__brand-logo {
-        width: 36px;
-        height: 36px;
-    }
-
-    /* Вуз — 32px, чтобы точно влезло, если экран очень узкий */
-    .header__brand--university .header__brand-logo {
-        width: 32px;
-        height: 32px;
-    }
-
     .header__brand-text {
-        font-size: 0.85rem;
-        white-space: nowrap; /* не переносим строку */
-    }
-
-    /* Короткие надписи для мобильного — единый размер */
-    .header__brand--university .brand-text--short,
-    .header__brand--ino .brand-text--short {
-        font-size: 1.1rem;
+        white-space: nowrap;
     }
 }
 
-/* Очень узкие экраны (< 360px) — ужимаем ещё сильнее */
-@media (max-width: 359px) {
-    .header__brand-logo,
-    .header__brand--university .header__brand-logo {
-        width: 28px;
-        height: 28px;
+/* ~ 250 % зума на мониторе 1080p */
+@media (max-height: 500px) {
+    .header {
+        padding: 5px 0;
+        border-bottom-width: 2px;
     }
+    .header__brand-logo {
+        width: 34px;
+        height: 34px;
+    }
+    .header__brand--university .brand-text--full,
+    .header__brand--ino .brand-text--full {
+        font-size: 1rem;
+    }
+    .header__brand--university .brand-text--mid {
+        font-size: 1.05rem;
+    }
+    .header__brand--university .brand-text--short,
+    .header__brand--ino .brand-text--short {
+        font-size: 1.15rem;
+    }
+}
 
+/* ~ 350 % зума */
+@media (max-height: 350px) {
+    .header {
+        padding: 3px 0;
+        border-bottom-width: 1.5px;
+    }
+    .header__brand-logo {
+        width: 26px;
+        height: 26px;
+    }
+    .header__brand--university .brand-text--full,
+    .header__brand--ino .brand-text--full {
+        font-size: 0.85rem;
+    }
+    .header__brand--university .brand-text--mid {
+        font-size: 0.9rem;
+    }
     .header__brand--university .brand-text--short,
     .header__brand--ino .brand-text--short {
         font-size: 1rem;
     }
 }
 
+/* ~ 450 % зума и выше — совсем «полоска» */
+@media (max-height: 260px) {
+    .header {
+        padding: 2px 0;
+        border-bottom-width: 1px;
+    }
+    .header__brand-logo {
+        width: 20px;
+        height: 20px;
+    }
+    .header__brand-text .brand-text {
+        font-size: 0.75rem;
+    }
+}
+
 /* ===========================
    Фоновые скетчи — пагода слева и сакура справа
    =========================== */
+
 .pagoda-bg,
 .sakura-bg {
     position: fixed;
     bottom: 0;
     z-index: 1;
-    height: min(107vh, 160vw);
     pointer-events: none;
     overflow: hidden;
     opacity: 0;
     transition: opacity 1s ease;
     contain: layout paint;
+    /* Размеры — только в vw/vh (без px-границ).
+       vw/vh масштабируются вместе с вьюпортом, а значит и с браузерным
+       зумом: физический размер иллюстраций не меняется ни при 50 %, ни при 500 %. */
 }
 
 .pagoda-bg {
     left: 0;
-    width: clamp(320px, 47vw, 735px);
+    width: 47vw;
+    height: 107vh;
 }
 
 .sakura-bg {
     right: 0;
-    width: clamp(300px, 43vw, 680px);
+    width: 43vw;
+    height: 107vh;
 }
 
 .pagoda-bg--ready { opacity: 0.30; }
@@ -967,10 +987,8 @@ a {
 .sketch-mark--static { opacity: 0.72; }
 
 .sketch-mark--animated {
-    /* stroke-dasharray задаётся инлайн в JS — браузер не парсит calc() в кадре */
     stroke-dashoffset: var(--dash-start, 0px);
     animation: sketch-draw-loop var(--draw-duration, 12s) var(--draw-delay, 0s) linear infinite;
-    /* Убрали will-change: для stroke-dashoffset он не создаёт GPU-слой, только жрёт память */
 }
 
 @keyframes sketch-draw-loop {
@@ -993,19 +1011,30 @@ a {
     animation-play-state: paused;
 }
 
-/* Контент остаётся выше рисунков; сами иллюстрации не перехватывают клики. */
+/* Контент выше рисунков; сами иллюстрации не перехватывают клики. */
 .container { position: relative; z-index: 2; }
 .header { z-index: 100; }
 
-@media (max-width: 768px) {
+/* ===========================
+   Мобильные тач-устройства
+   (именно тач, а не «узкий вьюпорт после зума»)
+   =========================== */
+@media (hover: none) and (pointer: coarse) and (max-width: 768px) {
     .pagoda-bg {
-        width: clamp(235px, 62vw, 400px);
+        width: 62vw;
         height: 73vh;
     }
     .sakura-bg {
-        width: clamp(220px, 53vw, 360px);
+        width: 53vw;
         height: 68vh;
     }
+    .pagoda-bg--ready { opacity: 0.22; }
+    .sakura-bg--ready { opacity: 0.18; }
+}
+
+/* Сильный зум на ПК даёт низкий вьюпорт — приглушаем фон,
+   чтобы он не забивал контент. Размер НЕ трогаем. */
+@media (max-height: 500px) {
     .pagoda-bg--ready { opacity: 0.22; }
     .sakura-bg--ready { opacity: 0.18; }
 }
@@ -1025,58 +1054,48 @@ a {
    =========================== */
 
 .gallery {
+    --gallery-pad: clamp(40px, 6vw, 70px);
+
     max-width: 900px;
     margin: 0 auto;
+    padding: 0 var(--gallery-pad);
+    box-sizing: border-box;
 }
 
 .gallery__swiper {
-    padding-bottom: 50px; /* место для пагинации */
-    --swiper-theme-color: var(--color-primary);   /* цвет пагинации и стрелок */
+    padding-bottom: 50px;
+    /* Не обрезаем боковые карточки эффекта cards */
+    overflow: visible;
+    --swiper-theme-color: var(--color-primary);
     --swiper-navigation-size: 32px;
     --swiper-pagination-color: var(--color-primary);
     --swiper-pagination-bullet-inactive-color: var(--color-text-light);
     --swiper-pagination-bullet-inactive-opacity: 0.35;
 }
 
-.gallery__slide {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--color-bg-alt);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    aspect-ratio: 4 / 3; /* одинаковые пропорции для всех слайдов */
-    box-shadow: var(--shadow-md);
+/* Swiper сам ставит overflow:hidden на wrapper — снимаем, чтобы cards не резались */
+.gallery__swiper .swiper-wrapper {
+    overflow: visible;
 }
 
-.gallery__slide img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-.gallery__slide--video {
-    aspect-ratio: 4 / 3;
-}
-
-.gallery__video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-/* Стрелки навигации */
+/* Стрелки: позиционируем от внешнего края .gallery, привязываясь к padding */
 .gallery__swiper .swiper-button-prev,
 .gallery__swiper .swiper-button-next {
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.9);
     color: var(--color-primary);
     box-shadow: var(--shadow-sm);
     transition: background var(--transition), transform var(--transition);
+}
+
+.gallery__swiper .swiper-button-prev {
+    left: calc(var(--gallery-pad) * -1 + 12px);
+}
+
+.gallery__swiper .swiper-button-next {
+    right: calc(var(--gallery-pad) * -1 + 12px);
 }
 
 .gallery__swiper .swiper-button-prev:hover,
@@ -1103,56 +1122,27 @@ a {
     border-radius: 5px;
 }
 
-/* Адаптив */
-@media (max-width: 768px) {
-    .gallery__swiper {
-        --swiper-navigation-size: 24px;
-    }
-
-    .gallery__swiper .swiper-button-prev,
-    .gallery__swiper .swiper-button-next {
-        width: 36px;
-        height: 36px;
-    }
-
-    .gallery__swiper .swiper-button-prev::after,
-    .gallery__swiper .swiper-button-next::after {
-        font-size: 13px;
-    }
-
-    .gallery__slide {
-        aspect-ratio: 1 / 1; /* квадрат на мобильных — компактнее */
-    }
-}
-
-@media (max-width: 480px) {
-    .gallery__swiper .swiper-button-prev,
-    .gallery__swiper .swiper-button-next {
-        display: none; /* на маленьких экранах свайпаем пальцем */
-    }
-}
-
-/* Скрываем скроллбар внутри галереи, но сохраняем возможность прокрутки */
-.gallery__swiper,
-.gallery__slide,
-.gallery__slide--video {
+/* Слайд */
+.gallery__slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg-alt);
+    border-radius: var(--radius-lg);
     overflow: hidden;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE/Edge */
+    aspect-ratio: 4 / 3;
+    box-shadow: var(--shadow-md);
 }
 
-.gallery__swiper::-webkit-scrollbar,
-.gallery__slide::-webkit-scrollbar,
-.gallery__slide--video::-webkit-scrollbar {
-    display: none; /* Chrome/Safari/Opera */
-}
-
-/* На всякий случай — для самого видео */
-.gallery__video {
-    display: block;
+.gallery__slide img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
+}
+
+.gallery__slide--video {
+    aspect-ratio: 4 / 3;
 }
 
 /* Скелетон для слайдов галереи */
@@ -1184,6 +1174,20 @@ a {
     100% { background-position: -200% 0; }
 }
 
+/* Скрываем скроллбар у слайдов, но сохраняем прокрутку */
+.gallery__slide,
+.gallery__slide--video {
+    overflow: hidden;
+    scrollbar-width: none;      /* Firefox */
+    -ms-overflow-style: none;   /* IE/Edge */
+}
+
+.gallery__slide::-webkit-scrollbar,
+.gallery__slide--video::-webkit-scrollbar {
+    display: none;              /* Chrome/Safari/Opera */
+}
+
+/* Видео — отдельно от карусели */
 .gallery__video-block {
     max-width: 900px;
     margin: 48px auto 0;
@@ -1200,4 +1204,38 @@ a {
     display: block;
     object-fit: contain;
     background: #000;
+}
+
+/* ===========================
+   Адаптив галереи
+   =========================== */
+
+@media (max-width: 768px) {
+    .gallery__swiper {
+        --swiper-navigation-size: 24px;
+    }
+
+    .gallery__swiper .swiper-button-prev,
+    .gallery__swiper .swiper-button-next {
+        width: 36px;
+        height: 36px;
+    }
+
+    .gallery__swiper .swiper-button-prev::after,
+    .gallery__swiper .swiper-button-next::after {
+        font-size: 13px;
+    }
+
+    .gallery__slide {
+        aspect-ratio: 1 / 1;
+    }
+}
+
+/* Прячем стрелки только на тач-устройствах (без мыши),
+   а не по ширине вьюпорта — иначе браузерный зум на ПК их убивает */
+@media (hover: none) and (pointer: coarse) {
+    .gallery__swiper .swiper-button-prev,
+    .gallery__swiper .swiper-button-next {
+        display: none;
+    }
 }
