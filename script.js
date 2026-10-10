@@ -31,6 +31,56 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // -------- Фоновые скетчи: SVG со штриховой анимацией --------
+    function initAnimatedSketch(hostId, svgUrl, readyClass, preserveAspectRatio) {
+        const host = document.getElementById(hostId);
+        if (!host) return;
+
+        fetch(svgUrl)
+            .then(response => {
+                if (!response.ok) throw new Error(`Не удалось загрузить SVG: ${svgUrl}`);
+                return response.text();
+            })
+            .then(markup => {
+                const parsed = new DOMParser().parseFromString(markup, 'image/svg+xml');
+                const svg = parsed.documentElement;
+                if (svg.tagName.toLowerCase() !== 'svg' || parsed.querySelector('parsererror')) return;
+
+                svg.removeAttribute('role');
+                svg.removeAttribute('aria-label');
+                svg.setAttribute('aria-hidden', 'true');
+                svg.setAttribute('preserveAspectRatio', preserveAspectRatio);
+                svg.querySelectorAll('title, desc').forEach(node => node.remove());
+
+                [...svg.querySelectorAll('path')].forEach(path => {
+                    let length = 0;
+                    try { length = path.getTotalLength(); } catch (_) { /* пропускаем некорректный путь */ }
+
+                    if (length < 12) {
+                        path.classList.add('sketch-mark--static');
+                        return;
+                    }
+
+                    path.style.setProperty('--path-length', `${length.toFixed(1)}px`);
+                    const duration = Math.min(16, Math.max(8, 7 + length / 70));
+                    // Отрицательная задержка распределяет штрихи по разным фазам уже при загрузке.
+                    const delay = -(Math.random() * duration);
+                    path.style.setProperty('--draw-duration', `${duration.toFixed(2)}s`);
+                    path.style.setProperty('--draw-delay', `${delay.toFixed(2)}s`);
+                    path.classList.add('sketch-mark--animated');
+                });
+
+                host.replaceChildren(document.importNode(svg, true));
+                host.classList.add(readyClass);
+            })
+            .catch(error => console.warn('Анимация скетча отключена:', error));
+    }
+
+    initAnimatedSketch('pagodaBackground', 'assets/illustrations/pagoda.svg',
+        'pagoda-bg--ready', 'xMinYMax meet');
+    initAnimatedSketch('sakuraBackground', 'assets/illustrations/sakura.svg',
+        'sakura-bg--ready', 'xMaxYMax meet');
+
     // -------- Появление элементов при скролле --------
     const revealElements = document.querySelectorAll('.reveal');
 
