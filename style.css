@@ -53,6 +53,7 @@
 
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
 }
 
 body {
@@ -62,9 +63,7 @@ body {
     color: var(--color-text);
     line-height: 1.65;
     -webkit-font-smoothing: antialiased;
-    overflow-x: clip;
-    /* На всякий: не даём контенту переполнять body */
-    max-width: 100vw;
+    overflow-x: hidden;
 }
 
 img {
@@ -1015,9 +1014,9 @@ a {
 .header { z-index: 100; }
 
 /* ===========================
-   Мобильные тач-устройства — портрет
+   Мобильный портрет: узкий вьюпорт
    =========================== */
-@media (hover: none) and (pointer: coarse) and (orientation: portrait) {
+@media (orientation: portrait) and (max-width: 768px) {
     .pagoda-bg {
         width: 62vw;
         height: 73vh;
@@ -1033,22 +1032,29 @@ a {
 }
 
 /* ===========================
-   Мобильные тач-устройства — ЛАНДШАФТ
-   Здесь высота критично мала → размер задаём в vh (относительно высоты),
-   а не в vw. vh-фолбэк обязателен для старых браузеров.
+   Ландшафт вообще (телефон, планшет, тач-ноут, сильный зум ПК):
+   низкая высота → считаем размер от vh, а не от vw,
+   и растягиваем по всей высоте вьюпорта — тогда скетч виден сразу,
+   без скролла, и не пропадает в углу.
    =========================== */
-@media (hover: none) and (pointer: coarse) and (orientation: landscape) {
+@media (orientation: landscape) and (max-height: 600px) {
     .pagoda-bg {
         width: 55vh;
         width: 55dvh;
         height: 100vh;
         height: 100dvh;
+        left: 0;
+        bottom: 0;
+        bottom: env(safe-area-inset-bottom, 0);
     }
     .sakura-bg {
         width: 50vh;
         width: 50dvh;
         height: 100vh;
         height: 100dvh;
+        right: 0;
+        bottom: 0;
+        bottom: env(safe-area-inset-bottom, 0);
     }
     .pagoda-bg--ready { opacity: 0.20; }
     .sakura-bg--ready { opacity: 0.16; }
@@ -1081,6 +1087,7 @@ a {
     margin: 0 auto;
     padding: 0 var(--gallery-pad);
     box-sizing: border-box;
+    overflow: hidden;
 }
 
 .gallery__swiper {
