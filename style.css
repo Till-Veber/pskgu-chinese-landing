@@ -596,15 +596,85 @@ a {
 }
 
 /* ===========================
-   Футер
+   Футер (с волной-сеткой)
    =========================== */
+
 .footer {
+    position: relative;
+    overflow: hidden;
     background: var(--color-primary);
     color: var(--color-white);
     padding: 28px 0;
+    isolation: isolate;
 }
 
+/* Сетка, проявляющаяся волной */
+.footer::before {
+    content: "";
+    position: absolute;
+    inset: 6px 0;
+    z-index: 0;
+    pointer-events: none;
+
+    /* Тонкая сетка 24×24 px, еле заметная */
+    background-image:
+            repeating-linear-gradient(
+                    0deg,
+                    rgba(255, 255, 255, 0.22) 0 1px,
+                    transparent 1px 24px
+            ),
+            repeating-linear-gradient(
+                    90deg,
+                    rgba(255, 255, 255, 0.22) 0 1px,
+                    transparent 1px 24px
+            );
+
+    /* Широкий мягкий «луч» — маска с плавными краями */
+    -webkit-mask-image: linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(0, 0, 0, 0.2) 20%,
+            rgba(0, 0, 0, 0.65) 50%,
+            rgba(0, 0, 0, 0.2) 80%,
+            transparent 100%
+    );
+    mask-image: linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(0, 0, 0, 0.2) 20%,
+            rgba(0, 0, 0, 0.65) 50%,
+            rgba(0, 0, 0, 0.2) 80%,
+            transparent 100%
+    );
+    -webkit-mask-size: 60% 100%;
+    mask-size: 60% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+
+    /* Стартовая позиция — полностью за левым краем */
+    -webkit-mask-position: -180% 0;
+    mask-position: -180% 0;
+
+    /* Чередование направлений — ходит вперёд-назад без сброса */
+    animation: wave-sweep 11s ease-in-out infinite alternate;
+}
+
+/* От -180% (полностью слева) до 280% (полностью справа) */
+@keyframes wave-sweep {
+    from {
+        -webkit-mask-position: -180% 0;
+        mask-position: -180% 0;
+    }
+    to {
+        -webkit-mask-position: 280% 0;
+        mask-position: 280% 0;
+    }
+}
+
+/* Контент — поверх эффекта */
 .footer__inner {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -624,8 +694,32 @@ a {
     opacity: 0.85;
 }
 
+@media (prefers-reduced-motion: reduce) {
+    .footer::before {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .footer::before {
+        background-image:
+                repeating-linear-gradient(
+                        0deg,
+                        rgba(255, 255, 255, 0.2) 0 1px,
+                        transparent 1px 30px
+                ),
+                repeating-linear-gradient(
+                        90deg,
+                        rgba(255, 255, 255, 0.2) 0 1px,
+                        transparent 1px 30px
+                );
+        /* Один проход дольше — на мобильном взгляд чаще отвлекается */
+        animation-duration: 14s;
+    }
+}
+
 /* ===========================
-   Анимация появления (как у МФТИ)
+   Анимация появления
    =========================== */
 .reveal {
     opacity: 0;

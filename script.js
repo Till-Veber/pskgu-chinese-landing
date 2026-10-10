@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // -------- 1. Прелоадер --------
+    const yearEl = document.getElementById('currentYear');
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+    // -------- Прелоадер --------
     const loader = document.getElementById('pageLoader');
     const hideLoader = () => loader && loader.classList.add('page-loader--hidden');
 
@@ -7,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Страховка, если load уже сработал или завис
     setTimeout(hideLoader, 1200);
 
-    // -------- 2. Аккордеон --------
+    // -------- Аккордеон --------
     const accordionItems = document.querySelectorAll('.accordion__item');
 
     accordionItems.forEach(item => {
@@ -28,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // -------- 3. Появление элементов при скролле --------
+    // -------- Появление элементов при скролле --------
     const revealElements = document.querySelectorAll('.reveal');
 
     if ('IntersectionObserver' in window) {
