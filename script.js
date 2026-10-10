@@ -32,6 +32,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // -------- Фоновые скетчи: SVG со штриховой анимацией --------
+
+// Ограничение: не более N анимированных путей на скетч — иначе страница лагает
+    const MAX_ANIMATED_PATHS = 50;
+    const MIN_ANIMATED_LENGTH = 40; // пути короче 40px не анимируем — их всё равно не видно
+
+// Проверяем, есть ли смысл вообще анимировать
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const cores = navigator.hardwareConcurrency || 4;
+    const SKETCH_ANIMATION_ENABLED = !prefersReducedMotion && cores >= 4;
+
     function initAnimatedSketch(hostId, svgUrl, readyClass, preserveAspectRatio) {
         const host = document.getElementById(hostId);
         if (!host) return;
@@ -52,21 +62,46 @@ document.addEventListener('DOMContentLoaded', () => {
                 svg.setAttribute('preserveAspectRatio', preserveAspectRatio);
                 svg.querySelectorAll('title, desc').forEach(node => node.remove());
 
-                [...svg.querySelectorAll('path')].forEach(path => {
-                    let length = 0;
-                    try { length = path.getTotalLength(); } catch (_) { /* пропускаем некорректный путь */ }
+                const paths = [...svg.querySelectorAll('path')];
 
-                    if (length < 12) {
+                // Считаем длины всех путей один раз
+                const pathData = paths.map((path, index) => {
+                    let length = 0;
+                    try { length = path.getTotalLength(); } catch (_) {}
+                    return { path, length, index };
+                });
+
+                // Отбираем только самые длинные пути для анимации
+                const candidates = pathData
+                    .filter(p => p.length >= MIN_ANIMATED_LENGTH)
+                    .sort((a, b) => b.length - a.length)
+                    .slice(0, MAX_ANIMATED_PATHS);
+
+                const animatedIndexes = new Set(candidates.map(p => p.index));
+
+                pathData.forEach(({ path, length, index }) => {
+                    // Если анимация отключена или путь не попал в топ — просто статика
+                    if (!SKETCH_ANIMATION_ENABLED || !animatedIndexes.has(index)) {
                         path.classList.add('sketch-mark--static');
                         return;
                     }
 
-                    path.style.setProperty('--path-length', `${length.toFixed(1)}px`);
-                    const duration = Math.min(16, Math.max(8, 7 + length / 70));
-                    // Отрицательная задержка распределяет штрихи по разным фазам уже при загрузке.
+                    // Предвычисляем всё в JS — браузер не тратит время на calc()
+                    const dashVisible = (length * 0.6).toFixed(1);
+                    const dashFull = length.toFixed(1);
+                    const dashStart = (length * 0.35).toFixed(1);
+                    const dashEnd = (-length).toFixed(1);
+
+                    path.style.strokeDasharray = `${dashVisible}px ${dashFull}px`;
+                    path.style.setProperty('--dash-start', `${dashStart}px`);
+                    path.style.setProperty('--dash-end', `${dashEnd}px`);
+
+                    // Длительность цикла: 10–20 секунд в зависимости от длины пути
+                    const duration = Math.min(20, Math.max(10, 7 + length / 80));
                     const delay = -(Math.random() * duration);
                     path.style.setProperty('--draw-duration', `${duration.toFixed(2)}s`);
                     path.style.setProperty('--draw-delay', `${delay.toFixed(2)}s`);
+
                     path.classList.add('sketch-mark--animated');
                 });
 
@@ -80,6 +115,14 @@ document.addEventListener('DOMContentLoaded', () => {
         'pagoda-bg--ready', 'xMinYMax meet');
     initAnimatedSketch('sakuraBackground', 'assets/illustrations/sakura.svg',
         'sakura-bg--ready', 'xMaxYMax meet');
+
+    // Пауза анимации, когда вкладка неактивна
+    document.addEventListener('visibilitychange', () => {
+        const paused = document.hidden;
+        document.querySelectorAll('.pagoda-bg, .sakura-bg').forEach(el => {
+            el.classList.toggle('is-paused', paused);
+        });
+    });
 
     // -------- Появление элементов при скролле --------
     const revealElements = document.querySelectorAll('.reveal');

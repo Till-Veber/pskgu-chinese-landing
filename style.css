@@ -949,23 +949,30 @@ a {
 .sketch-mark--static { opacity: 0.72; }
 
 .sketch-mark--animated {
-    /* Движущийся сегмент рисуется, проходит путь и затем стирается. */
-    stroke-dasharray: calc(var(--path-length, 0px) * 0.6), var(--path-length, 0px);
-    stroke-dashoffset: var(--path-length, 0px);
+    /* stroke-dasharray задаётся инлайн в JS — браузер не парсит calc() в кадре */
+    stroke-dashoffset: var(--dash-start, 0px);
     animation: sketch-draw-loop var(--draw-duration, 12s) var(--draw-delay, 0s) linear infinite;
-    will-change: stroke-dashoffset, opacity;
+    /* Убрали will-change: для stroke-dashoffset он не создаёт GPU-слой, только жрёт память */
 }
 
 @keyframes sketch-draw-loop {
     0% {
-        stroke-dashoffset: calc(var(--path-length, 0px) * 0.35);
+        stroke-dashoffset: var(--dash-start, 0px);
         opacity: 0;
     }
-    10%, 90% { opacity: 0.85; }
+    10%, 90% {
+        opacity: 0.85;
+    }
     100% {
-        stroke-dashoffset: calc(var(--path-length, 0px) * -1);
+        stroke-dashoffset: var(--dash-end, 0px);
         opacity: 0;
     }
+}
+
+/* Пауза, когда вкладка скрыта */
+.pagoda-bg.is-paused .sketch-mark--animated,
+.sakura-bg.is-paused .sketch-mark--animated {
+    animation-play-state: paused;
 }
 
 /* Контент остаётся выше рисунков; сами иллюстрации не перехватывают клики. */
