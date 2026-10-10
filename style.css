@@ -121,7 +121,7 @@ a {
 .header {
     background: var(--color-white);
     border-bottom: 3px solid var(--color-primary);
-    padding: 18px 0;
+    padding: 16px 0;
     position: sticky;
     top: 0;
     z-index: 100;
@@ -132,43 +132,91 @@ a {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 20px;
-    flex-wrap: wrap;
+    gap: 24px;
 }
 
+/* Базовый бренд-блок */
 .header__brand {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    gap: 14px;
     text-decoration: none;
-    line-height: 1.2;
+    min-width: 0; /* чтобы длинные надписи корректно сжимались */
 }
 
-.header__logo {
-    font-family: var(--font-heading);
-    font-size: 1.7rem;
-    font-weight: 700;
+.header__brand-logo {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    object-fit: contain;
+    transition: transform var(--transition);
+}
+
+.header__brand:hover .header__brand-logo {
+    transform: scale(1.06);
+}
+
+/* Текст — общий контейнер */
+.header__brand-text {
+    line-height: 1.25;
+    min-width: 0;
+}
+
+/* Все три варианта текста скрыты по умолчанию */
+.brand-text {
+    display: none;
+}
+
+/* ---------------------------
+   ВУЗ: рукописный шрифт, красный, плавное подчёркивание
+   --------------------------- */
+.header__brand--university .header__brand-text {
     color: var(--color-primary);
-    letter-spacing: 0.02em;
-}
-
-.header__subtitle {
-    font-size: 0.85rem;
-    color: var(--color-text-light);
-    margin-top: 2px;
-}
-
-.header__link {
-    font-size: 0.9rem;
-    color: var(--color-primary);
-    text-decoration: none;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size var(--transition);
     padding-bottom: 2px;
-    border-bottom: 1px solid transparent;
-    transition: border-color var(--transition);
-    white-space: nowrap;
 }
 
-.header__link:hover {
-    border-color: var(--color-primary);
+.header__brand--university .brand-text {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    color: inherit;
+}
+
+.header__brand--university .brand-text--full  { font-size: 1.35rem; }
+.header__brand--university .brand-text--mid   { font-size: 1.4rem; }
+.header__brand--university .brand-text--short { font-size: 1.6rem; }
+
+.header__brand--university:hover .header__brand-text {
+    background-size: 100% 1px;
+}
+
+/* ---------------------------
+   ИНСТИТУТ: рукописный шрифт, чёрный → красный при hover
+   --------------------------- */
+.header__brand--ino .header__brand-text {
+    color: var(--color-text); /* чёрный (тёмный) */
+    transition: color var(--transition);
+}
+
+.header__brand--ino .brand-text {
+    font-family: var(--font-heading); /* рукописный FoglihtenNo06 */
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    color: inherit;
+    line-height: 1.25;
+}
+
+/* Размеры — такие же, как у вуза */
+.header__brand--ino .brand-text--full  { font-size: 1.35rem; }
+.header__brand--ino .brand-text--short { font-size: 1.6rem; }
+
+.header__brand--ino:hover .header__brand-text {
+    color: var(--color-primary); /* при hover → красный */
 }
 
 /* ===========================
@@ -605,20 +653,7 @@ a {
    Адаптив
    =========================== */
 @media (max-width: 768px) {
-    .header {
-        padding: 14px 0;
-    }
-    .header__inner {
-        flex-direction: column;
-        text-align: center;
-        gap: 10px;
-    }
-    .header__brand {
-        align-items: center;
-    }
-    .header__logo {
-        font-size: 1.4rem;
-    }
+    /* Хедер не трогаем — правила для него ниже */
 
     .hero {
         padding: 60px 0 50px;
@@ -677,5 +712,90 @@ a {
     }
     .contacts__item {
         padding: 18px 20px;
+    }
+}
+
+/* ===========================
+   Хедер: адаптивные надписи
+   =========================== */
+
+/* ---------------------------
+   ВУЗ: полное → среднее → короткое
+   --------------------------- */
+@media (min-width: 1000px) {
+    .header__brand--university .brand-text--full { display: inline; }
+}
+@media (min-width: 700px) and (max-width: 999px) {
+    .header__brand--university .brand-text--mid { display: inline; }
+    .header__brand-logo { width: 48px; height: 48px; }
+}
+@media (max-width: 699px) {
+    .header__brand--university .brand-text--short { display: inline; }
+    .header__brand-logo { width: 44px; height: 44px; }
+}
+
+/* ---------------------------
+   ИНСТИТУТ: полное → короткое (без промежуточного)
+   --------------------------- */
+@media (min-width: 800px) {
+    .header__brand--ino .brand-text--full { display: inline; }
+}
+@media (max-width: 799px) {
+    .header__brand--ino .brand-text--short { display: inline; }
+}
+
+/* ---------------------------
+   Мобильный хедер: одна строка, компактно
+   --------------------------- */
+@media (max-width: 480px) {
+    .header {
+        padding: 10px 0;
+    }
+
+    .header__inner {
+        gap: 8px;
+        flex-wrap: nowrap; /* запрещаем перенос — только одна строка */
+    }
+
+    .header__brand {
+        gap: 6px;
+        flex-shrink: 1; /* разрешаем сжиматься, если не влезает */
+        min-width: 0;
+    }
+
+    .header__brand-logo {
+        width: 36px;
+        height: 36px;
+    }
+
+    /* Вуз — 32px, чтобы точно влезло, если экран очень узкий */
+    .header__brand--university .header__brand-logo {
+        width: 32px;
+        height: 32px;
+    }
+
+    .header__brand-text {
+        font-size: 0.85rem;
+        white-space: nowrap; /* не переносим строку */
+    }
+
+    /* Короткие надписи для мобильного — единый размер */
+    .header__brand--university .brand-text--short,
+    .header__brand--ino .brand-text--short {
+        font-size: 1.1rem;
+    }
+}
+
+/* Очень узкие экраны (< 360px) — ужимаем ещё сильнее */
+@media (max-width: 359px) {
+    .header__brand-logo,
+    .header__brand--university .header__brand-logo {
+        width: 28px;
+        height: 28px;
+    }
+
+    .header__brand--university .brand-text--short,
+    .header__brand--ino .brand-text--short {
+        font-size: 1rem;
     }
 }
