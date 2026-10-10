@@ -124,6 +124,67 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // -------- Галерея (Swiper) с эффектом карточек --------
+    const galleryEl = document.querySelector('.gallery__swiper');
+    if (galleryEl && typeof Swiper !== 'undefined') {
+        const gallerySwiper = new Swiper(galleryEl, {
+            effect: 'cards',
+            grabCursor: true,
+            centeredSlides: true,
+            slidesPerView: 1,
+            spaceBetween: 0,
+            loop: false,          // ← вот это главное
+            rewind: true,         // когда дошли до конца — следующий свайп возвращает в начало
+            speed: 750,           // плавнее, чем было (по умолчанию 300)
+
+            cardsEffect: {
+                perSlideOffset: 18,
+                perSlideRotate: 4,
+                rotate: true,
+                slideShadows: false,
+            },
+
+            navigation: {
+                nextEl: '.gallery__swiper .swiper-button-next',
+                prevEl: '.gallery__swiper .swiper-button-prev',
+            },
+
+            pagination: {
+                el: '.gallery__swiper .swiper-pagination',
+                clickable: true,
+            },
+
+            keyboard: {
+                enabled: true,
+                onlyInViewport: true,
+            },
+
+            a11y: {
+                prevSlideMessage: 'Предыдущий слайд',
+                nextSlideMessage: 'Следующий слайд',
+            },
+        });
+    }
+
+    // -------- Скелетон для фото в карусели --------
+    document.querySelectorAll('.gallery__slide').forEach(slide => {
+        const img = slide.querySelector('img');
+        if (!img) {
+            slide.classList.add('is-loaded');
+            return;
+        }
+
+        // Если фото уже загружено из кэша
+        if (img.complete && img.naturalWidth > 0) {
+            slide.classList.add('is-loaded');
+            return;
+        }
+
+        const onReady = () => slide.classList.add('is-loaded');
+        img.addEventListener('load', onReady, { once: true });
+        img.addEventListener('error', onReady, { once: true });
+    });
+
     // -------- Появление элементов при скролле --------
     const revealElements = document.querySelectorAll('.reveal');
 

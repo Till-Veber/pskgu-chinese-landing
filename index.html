@@ -11,9 +11,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400&display=swap&subset=cyrillic" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
 </head>
 <body>
-<!-- Прелоадер (как у Нетологии) -->
+<!-- Прелоадер -->
 <div class="page-loader" id="pageLoader" aria-hidden="true">
     <div class="page-loader__spinner"></div>
 </div>
@@ -78,7 +80,7 @@
         </div>
     </section>
 
-    <!-- О программе (аккордеон, как у СПбГУ) -->
+    <!-- О программе -->
     <section class="section" id="about">
         <div class="container">
             <h2 class="section__title reveal">О программе</h2>
@@ -192,6 +194,52 @@
         </div>
     </section>
 
+    <!-- Галерея -->
+    <section class="section" id="gallery">
+        <div class="container">
+            <h2 class="section__title reveal">Галерея</h2>
+            <p class="section__lead reveal">Тут могут быть фото и видео для курса</p>
+
+            <div class="gallery reveal">
+                <div class="swiper gallery__swiper">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide gallery__slide">
+                            <img src="assets/img/gallery/photo1.webp" alt="Занятие по китайскому языку" loading="lazy">
+                        </div>
+                        <div class="swiper-slide gallery__slide">
+                            <img src="assets/img/gallery/photo2.webp" alt="Групповое занятие" loading="lazy">
+                        </div>
+                        <div class="swiper-slide gallery__slide">
+                            <img src="assets/img/gallery/photo3.webp" alt="Работа с иероглифами" loading="lazy">
+                        </div>
+                        <div class="swiper-slide gallery__slide">
+                            <img src="assets/img/gallery/photo4.webp" alt="Практика разговорной речи" loading="lazy">
+                        </div>
+                        <div class="swiper-slide gallery__slide">
+                            <img src="assets/img/gallery/photo5.webp" alt="Атмосфера на занятии" loading="lazy">
+                        </div>
+                    </div>
+
+                    <div class="swiper-button-prev"></div>
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-pagination"></div>
+                </div>
+            </div>
+
+            <!-- Видео — отдельно от карусели -->
+            <div class="gallery__video-block reveal">
+                <video
+                        class="gallery__video"
+                        src="assets/img/gallery/video.mp4"
+                        poster="assets/img/gallery/video-poster.jpg"
+                        controls
+                        muted
+                        playsinline
+                        preload="metadata"></video>
+            </div>
+        </div>
+    </section>
+
     <!-- Контакты -->
     <section class="section" id="contacts">
         <div class="container">
@@ -223,6 +271,8 @@
     </div>
 </footer>
 
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
