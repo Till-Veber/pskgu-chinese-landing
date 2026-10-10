@@ -1,4 +1,19 @@
 /* ===========================
+   Шрифты
+   =========================== */
+
+/* FoglihtenNo06 — рукописный шрифт для заголовков */
+@font-face {
+    font-family: 'FoglihtenNo06';
+    src: url('assets/fonts/FoglihtenNo06.woff2') format('woff2'),
+    url('assets/fonts/FoglihtenNo06.woff') format('woff'),
+    url('assets/fonts/FoglihtenNo06.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap; /* Текст виден сразу, шрифт подгружается фоном */
+}
+
+/* ===========================
    Переменные — фирстиль ПсковГУ
    =========================== */
 :root {
@@ -13,7 +28,7 @@
     --color-border: rgba(158, 43, 43, 0.15);
     --color-white: #ffffff;
 
-    --font-heading: 'Playfair Display', 'Georgia', serif;
+    --font-heading: 'FoglihtenNo06', 'Georgia', serif;
     --font-body: 'PT Sans', 'Arial', sans-serif;
 
     --container-width: 1140px;
